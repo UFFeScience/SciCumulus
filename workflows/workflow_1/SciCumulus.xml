@@ -1,0 +1,26 @@
+<SciCumulus>
+	<environment type="LOCAL"/>
+	<binary directory="/Users/vitor/Documents/Repository/SciCumulus/SciCumulus-Vitor/SciCumulusCore/target" execution_version="SciCumulusCore-1.8-jar-with-dependencies.jar"/>
+	<constraint workflow_exectag="workflow_1-1" cores="1"/>
+	<workspace workflow_dir="/Users/vitor/Documents/Repository/SciCumulus/SciCumulus-Vitor/workflows/workflow_1"/>
+	<database name="frigga" username="chiron" password="chiron" port="5432" server="localhost"/>
+<!-- 	<database name="frigga" username="postgres" password="livre2008!" port="5432" server="ec2-50-17-107-164.compute-1.amazonaws.com"/> -->
+	<conceptualWorkflow tag="workflow-1" description="">
+		<activity tag="act1" description="" type="MAP" template="%=WFDIR%/template" activation="./experiment.cmd">
+			<relation reltype="Input" name="IMod1Act1"/>
+			<relation reltype="Output" name="OMod1Act1" />
+			<field name="ID" type="float" input="IMod1Act1" output="OMod1Act1" decimalplaces="0"/>
+			<field name="T1" type="float" input="IMod1Act1" decimalplaces="0"/>
+			<field name="T2" type="float" input="IMod1Act1" output="OMod1Act1" decimalplaces="0"/>
+    	</activity>
+	    <activity tag="act2" description="" type="MAP" activation="java -jar %=WFDIR%/bin/Sleep.jar ID=%=ID% T2=%=T2%">
+			<relation reltype="Input" name="IMod1Act2" dependency="act1"/>
+			<relation reltype="Output" name="OMod1Act2" />
+			<field name="ID" type="float" input="IMod1Act2" output="OMod1Act2" decimalplaces="0"/>
+			<field name="T2" type="float" input="IMod1Act2" output="OMod1Act2" decimalplaces="0"/>
+    	</activity>
+	</conceptualWorkflow>
+	<executionWorkflow tag="workflow-1" execmodel="DYN_FAF" expdir="%=WFDIR%/exp" max_failure="5" user_interaction="false" redundancy="false" reliability="0.1">
+		<relation name="IMod1Act1" filename="Input.dataset"/>
+	</executionWorkflow>
+</SciCumulus>

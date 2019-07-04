@@ -1,0 +1,56 @@
+<SciCumulus>
+	<credentials access_key="AKIAJ7XMJKQWXBV5OGFQ" secret_access_key="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" key_name="SciCumulus" security_group="SC" />
+	<environment verbose="true" cluster_name="vitor"/>
+	<binary conceptual_version="SciCumulusSetup.jar" execution_version="SciCumulusCore.jar"/>
+	<machine image="ami-1c927c74" user="root" password="livre2009#">
+		<vm type="t1.micro" financial_cost="1.2" disk_space="1680" ram="23" gflops="93.856" platform="64" cores="1"/>
+		<vm type="m1.small" financial_cost="2.1" disk_space="3360" ram="60" gflops="93.856" platform="64" cores="2"/>
+		<vm type="m1.large" financial_cost="2.4" disk_space="1680" ram="23" gflops="93.856" platform="64" cores="4"/>
+	</machine>
+	<constraint workflow_exectag="workflow_1-9" max_time="3600" max_financial_cost="100" max_vm_amount="20" total_ram="24" total_disk="5" alfa1="0.5" alfa2="0.5" alfa3="0.0"/>
+	<workspace upload="true" workflow_dir="/Users/vitor/Documents/Repository/SciCumulus/SciCumulus-Vitor/workflows/sciphy" bucket_name="vitor-starter" compressed_workspace="temp_workflow_1.zip" compressed_dir="/root/temp_workflow_1" />
+	<database name="frigga" username="chiron" password="chiron" port="5432" server="localhost"/>
+	<query sql="select ea.taskid, ea.actid, ea.machineid, ea.status from eactivation as ea;"/>
+	<conceptualWorkflow tag="sciphy" description="Phylogeny using RAXML">
+		<activity tag="dataselection" type="MAP" template="%=WFDIR%/template_dataselection" activation="./experiment.cmd" description="preliminary data selection">
+			<relation reltype="Input" name="idataselection"/>
+			<relation reltype="Output" name="odataselection"/>
+			<field name="NAME" type="string" input="idataselection" output="odataselection"/>
+			<field name="FASTA_FILE" type="file" input="idataselection" output="odataselection" instrumented="false" operation="COPY"/>
+		</activity>
+		<activity tag="mafft" type="MAP" template="%=WFDIR%/template_mafft" activation="./experiment.cmd" extractor="./extractor.cmd" description="align with mafft">
+			<relation reltype="Input" name="imafft" dependency="dataselection"/>
+			<relation reltype="Output" name="omafft"/>
+            <field name="NAME" type="string" input="imafft" output="omafft"/>
+			<field name="FASTA_FILE" type="file" input="imafft" output="omafft" operation="COPY"/>
+			<field name="MAFFT_FILE" type="file" output="omafft" operation="COPY"/>
+        </activity>
+        <activity tag="readseq" type="MAP" template="%=WFDIR%/template_readseq" activation="./experiment.cmd" extractor="./extractor.cmd" description="change format withreadseq">
+            <relation reltype="Input" name="ireadseq" dependency="mafft"/>
+           	<relation reltype="Output" name="oreadseq"/>
+            <field name="NAME" type="string" input="ireadseq" output="oreadseq"/>
+			<field name="FASTA_FILE" type="file" input="ireadseq" output="oreadseq" operation="COPY"/>
+			<field name="MAFFT_FILE" type="file" input="ireadseq" operation="COPY"/>
+			<field name="PHYLIP" type="file" output="oreadseq" operation="COPY"/>
+        </activity>
+        <activity tag="modelgenerator" type="MAP" template="%=WFDIR%/template_modelgenerator" activation="./experiment.cmd" extractor="./extractor.cmd" description="elect model with modelgenerator">
+            <relation reltype="Input" name="imodelgenerator" dependency="readseq"/>
+            <relation reltype="Output" name="omodelgenerator"/>
+            <field name="NAME" type="string" input="imodelgenerator" output="omodelgenerator"/>
+			<field name="FASTA_FILE" type="file" input="imodelgenerator" output="omodelgenerator" operation="COPY"/>
+			<field name="PHYLIP" type="file" input="imodelgenerator" output="omodelgenerator" operation="COPY"/>
+			<field name="MG" type="file" output="omodelgenerator" operation="COPY"/>
+        </activity>
+        <activity tag="raxml" type="MAP" template="%=WFDIR%/template_raxml" activation="./experiment.cmd" extractor="./extractor.cmd" description="construct trees with raxml">
+        	<relation reltype="Input" name="iraxml" dependency="modelgenerator"/>
+           	<relation reltype="Output" name="oraxml"/>
+            <field name="NAME" type="string" input="iraxml" output="oraxml"/>
+			<field name="FASTA_FILE" type="file" input="iraxml" output="oraxml"/>
+			<field name="PHYLIP" type="file" input="iraxml" operation="COPY"/>
+			<field name="MG" type="file" input="iraxml" operation="COPY"/>
+        </activity>
+	</conceptualWorkflow>
+	<executionWorkflow execmodel="DYN_FAF" exectag="sciphy-1" tag="SciPhy" expdir="%=WFDIR%/exp" max_failure="5" user_interaction="false" redundancy="true" reliability="0.9" >
+		<relation name="idataselection" filename="idataselection.dataset"/>
+	</executionWorkflow>
+</SciCumulus>

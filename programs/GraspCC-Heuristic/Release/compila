@@ -1,0 +1,5 @@
+g++ -D__LINUX__  -I../include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.d" -o"src/main.o" "../src/main.cpp"
+g++ -D__LINUX__  -I../include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/procedures.d" -MT"src/procedures.d" -o"src/procedures.o" "../src/procedures.cpp"
+g++ -o"GraspCC" ./src/main.o ./src/procedures.o
+
+

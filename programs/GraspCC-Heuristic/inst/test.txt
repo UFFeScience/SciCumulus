@@ -1,0 +1,26 @@
+# - the available packages:
+# the package types number
+package 3
+# Gflops of each package type
+Gflops 93.856 332.8 1123.856
+# GBs of RAM of each package type
+ram 23 60.5 23
+# the plataform type
+plataform 64 64 64
+# GBs of disk (HD) of each package type
+disk 1680 3360 1680
+# the price per time unit of each package type
+price 1.3 2.4 2.1
+# - the client requirements:
+# the maximum cost that the client can pay
+C 343.2
+# the minimum Gflops that the client's aplication need
+F 20270131.2
+# the total RAM memory (GBs) that the client's aplication need
+M 76.8
+# the maximum disk capacity (GBs) that the client's aplication need
+D 51,2
+# the maximum time (per time unit:hour)
+T 12
+# the maximum package number that it can be utilized
+P 20

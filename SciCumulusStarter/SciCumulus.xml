@@ -1,0 +1,32 @@
+<SciCumulus>
+	<credentials access_key="AKIAJ7XMJKQWXBV5OGFQ" secret_access_key="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"/>
+	<environment verbose="true" type="CLOUD_AMAZON" cluster_name="vitor"/>
+	<binary directory="/root/programs" conceptual_version="SciCumulusSetup.jar" execution_version="SciCumulusCore.jar"/>
+	<machineTypes image="ami-e0609688" user="root" password="livre2009#">
+		<vm type="t1.micro" financial_cost="1.2" disk_space="1680" ram="23" gflops="93.856" platform="64" cores="1"/>
+		<vm type="m1.small" financial_cost="2.1" disk_space="3360" ram="60" gflops="93.856" platform="64" cores="2"/>
+		<vm type="m1.large" financial_cost="2.4" disk_space="1680" ram="23" gflops="93.856" platform="64" cores="4"/>
+	</machineTypes>
+	<constraint workflow_exectag="workflow_1-12" max_time="60" max_financial_cost="100" max_vm_amount="20" total_ram="24" total_disk="5" alfa1="0.5" alfa2="0.5" alfa3="0.0" cores="1"/>
+	<workspace upload="true" bucket_name="vitor-starter" workflow_dir="/root/workflow_1" compressed_workspace="temp_workflow_1.zip" compressed_dir="temp_workflow_1" />
+	<database name="frigga" username="postgres" password="livre2008!" port="5432" server="ec2-50-17-107-164.compute-1.amazonaws.com" path="/var/lib/pgsql"/>
+	<query sql="select ea.taskid, ea.actid, ea.machineid, ea.status from eactivation as ea;"/>
+	<conceptualWorkflow tag="workflow-1" description="">
+		<activity tag="act1" description="" type="MAP" activation="java -jar /root/programs/Sleep.jar ID=%=ID% T2=%=T2%">
+			<relation reltype="Input" name="IMod1Act1"/>
+			<relation reltype="Output" name="OMod1Act1" />
+			<field name="ID" type="float" input="IMod1Act1" output="OMod1Act1" decimalplaces="0"/>
+			<field name="T1" type="float" input="IMod1Act1" decimalplaces="0"/>
+			<field name="T2" type="float" input="IMod1Act1" output="OMod1Act1" decimalplaces="0"/>
+    	</activity>
+	    <activity tag="act2" description="" type="MAP" activation="java -jar /root/programs/Sleep.jar ID=%=ID% T2=%=T2%">
+			<relation reltype="Input" name="IMod1Act2" dependency="act1"/>
+			<relation reltype="Output" name="OMod1Act2" />
+			<field name="ID" type="float" input="IMod1Act2" output="OMod1Act2" decimalplaces="0"/>
+			<field name="T2" type="float" input="IMod1Act2" output="OMod1Act2" decimalplaces="0"/>
+    	</activity>
+	</conceptualWorkflow>
+	<executionWorkflow tag="workflow-1" execmodel="DYN_FAF" expdir="%=WFDIR%/exp" max_failure="5" user_interaction="false" redundancy="true" reliability="0.9">
+		<relation name="IMod1Act1" filename="Input.dataset"/>
+	</executionWorkflow>
+</SciCumulus>

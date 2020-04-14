@@ -1,0 +1,25 @@
+<SciCumulus>
+	<environment type="LOCAL"/>
+	<constraint workflow_exectag="example_3" cores="3"/>
+	<workspace workflow_dir="|#workflow directory#|/example_3""/>
+	<database name="|#database name#|" username="|#username#|" password="|#password#|" port="|#port#|" server="|#server#|"/>
+	<conceptualWorkflow tag="example_3" description="">
+		<activity tag="act1" description="" type="FILTER" activation="java -jar %=WFDIR%/bin/Filter.jar ID=%=ID% T1=%=T1% T2=%=T2%">
+			<relation reltype="Input" name="IEx3Act1"/>
+			<relation reltype="Output" name="OEx3Act1" />
+			<field name="ID" type="float" input="IEx3Act1" output="OEx3Act1" decimalplaces="0"/>
+			<field name="T1" type="float" input="IEx3Act1" output="OEx3Act1" decimalplaces="0"/>
+			<field name="T2" type="float" input="IEx3Act1" output="OEx3Act1" decimalplaces="0"/>
+        </activity>
+		<activity tag="act2" description="" type="MAP" activation="java -jar %=WFDIR%/bin/Sleep.jar ID=%=ID% T2=%=T2%">
+			<relation reltype="Input" dependency="act1"/>
+			<relation reltype="Output" name="OEx3Act2" />
+			<field name="ID" type="float"  output="OEx3Act2" decimalplaces="0"/>
+			<field name="T1" type="float"  decimalplaces="0"/>
+			<field name="T2" type="float"  output="OEx3Act2" decimalplaces="0"/>
+        </activity>
+	</conceptualWorkflow>
+	<executionWorkflow tag="example_3" execmodel="DYN_FAF" expdir="%=WFDIR%/exp" max_failure="5" user_interaction="false" redundancy="false" reliability="0.1">
+		<relation name="IEx3Act1" filename="Input.dataset"/>
+	</executionWorkflow>
+</SciCumulus>

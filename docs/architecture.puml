@@ -1,0 +1,17 @@
+
+@startuml
+package "Core" {
+  class Workflow
+  class Activity
+  class WorkflowExecutor
+}
+
+package "Infrastructure" {
+  class ProvenanceRepository
+  class StorageService
+}
+
+Workflow --> Activity
+WorkflowExecutor --> Workflow
+WorkflowExecutor --> ProvenanceRepository
+@enduml
